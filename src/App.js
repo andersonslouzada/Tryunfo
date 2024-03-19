@@ -33,14 +33,12 @@ class App extends React.Component {
       cardAttr2,
       cardAttr3,
     } = this.state;
-
     const validInputsText = (
       cardName.length === 0
       || cardDescription.length === 0
       || cardImage.length === 0
       || cardRare.length === 0
     );
-
     const maxValue = 90;
     const maxSum = 210;
     const validInputsNumber = (
@@ -48,9 +46,7 @@ class App extends React.Component {
       || (Number(cardAttr2) < 0 || Number(cardAttr2) > maxValue)
       || (Number(cardAttr3) < 0 || Number(cardAttr3) > maxValue)
     );
-
     const validSum = (Number(cardAttr1) + Number(cardAttr2) + Number(cardAttr3) > maxSum);
-
     this.setState(
       { isSaveButtonDisabled: validInputsText || validInputsNumber || validSum },
     );
@@ -68,7 +64,6 @@ class App extends React.Component {
       cardTrunfo,
     } = this.state;
     if (cardTrunfo === true) this.state.hasTrunfo = true;
-
     this.setState((prevState) => ({ cardsList: [...prevState.cardsList,
       { cardName,
         cardDescription,
@@ -88,6 +83,18 @@ class App extends React.Component {
     cardTrunfo: false,
     }));
   };
+
+  deleteCard(card) {
+    const { cardsList, hasTrunfo } = this.state;
+    const findDeleteCard = cardsList.findIndex((index) => index.cardName === card);
+    const cardDelete = cardsList[findDeleteCard];
+    const newCardList = cardsList.filter((index) => index.cardName !== card);
+
+    this.setState({
+      cardsList: newCardList,
+      hasTrunfo: !cardDelete.cardTrunfo && hasTrunfo,
+    });
+  }
 
   render() {
     const {
@@ -132,21 +139,30 @@ class App extends React.Component {
           cardTrunfo={ cardTrunfo }
         />
         <div>
-          { cardsList.map((element) => (<Card
-            key={ element.cardName }
-            cardName={ element.cardName }
-            cardDescription={ element.cardDescription }
-            cardImage={ element.cardImage }
-            cardAttr1={ element.cardAttr1 }
-            cardAttr2={ element.cardAttr2 }
-            cardAttr3={ element.cardAttr3 }
-            cardRare={ element.cardRare }
-            cardTrunfo={ element.cardTrunfo }
-          />))}
+          { cardsList.map((element) => (
+            <>
+              <Card
+                key={ element.cardName }
+                cardName={ element.cardName }
+                cardDescription={ element.cardDescription }
+                cardImage={ element.cardImage }
+                cardAttr1={ element.cardAttr1 }
+                cardAttr2={ element.cardAttr2 }
+                cardAttr3={ element.cardAttr3 }
+                cardRare={ element.cardRare }
+                cardTrunfo={ element.cardTrunfo }
+              />
+              <button
+                data-testid="delete-button"
+                onClick={ () => this.cardDelete(element.cardName) }
+              >
+                Excluir
+              </button>
+            </>
+          ))}
         </div>
       </main>
     );
   }
 }
-
 export default App;
